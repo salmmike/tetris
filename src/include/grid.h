@@ -32,7 +32,6 @@ public:
     /// @return 
     [[nodiscard]] bool in_grid(Position pos, bool allow_on_top=false) const;
 
-
     /// @brief check if the position is occupied.
     /// @param pos Position to check
     /// @return True if block in grid is filled.

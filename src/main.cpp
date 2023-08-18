@@ -10,7 +10,7 @@ int main()
     Grid grid(30);
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::uniform_int_distribution<> distr(0, 3);
+    std::uniform_int_distribution<> distr(0, 6);
 
     std::unique_ptr<Tetromino> tetromino = std::make_unique<IPiece>(&grid, &gen);
 
@@ -45,6 +45,15 @@ int main()
                     break;
                 case 3:
                     tetromino = std::make_unique<TPiece>(&grid, &gen);
+                    break;
+                case 4:
+                    tetromino = std::make_unique<RZPiece>(&grid, &gen);
+                    break;
+                case 5:
+                    tetromino = std::make_unique<LPiece>(&grid, &gen);
+                    break;
+                case 6:
+                    tetromino = std::make_unique<JPiece>(&grid, &gen);
                     break;
                 default:
                     break;
@@ -81,10 +90,10 @@ int main()
                     down_divider = down_limit;
                     break;
                 case sf::Keyboard::Z:
-                    tetromino->rotate_c();
+                    tetromino->rotate_cc();
                     break;
                 case sf::Keyboard::X:
-                    tetromino->rotate_cc();
+                    tetromino->rotate_c();
                     break;
                 default:
                     break;

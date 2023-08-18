@@ -10,7 +10,7 @@
 
 class Tetromino {
 public:
-    Tetromino(Grid* grid, std::mt19937* generator, std::vector<Position> blocks);
+    Tetromino(Grid* grid, std::mt19937* generator);
 
     ~Tetromino();
 
@@ -53,7 +53,7 @@ protected:
     bool _try_move(Position new_center);
     bool _try_rotate(std::vector<Position> new_blocks);
     sf::Color _get_random_color();
-
+    std::vector<Position> _visual_grid_to_pos_vec(const int visual_blocks[4][4]);
     std::vector<std::vector<Position>> _block_arrangements;
     int _current_blocks {0};
 };
@@ -81,5 +81,24 @@ class TPiece : public Tetromino
 public:
     TPiece(Grid* grid, std::mt19937* generator);
 };
+
+class LPiece : public Tetromino
+{
+public:
+    LPiece(Grid* grid, std::mt19937* generator);
+};
+
+class JPiece : public Tetromino
+{
+public:
+    JPiece(Grid* grid, std::mt19937* generator);
+};
+
+class RZPiece : public Tetromino
+{
+public:
+    RZPiece(Grid* grid, std::mt19937* generator);
+};
+
 
 #endif /* TETROMINO_H */

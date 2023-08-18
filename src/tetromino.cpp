@@ -1,43 +1,216 @@
 #include "tetromino.h"
 
-
-
-OPiece::OPiece(Grid *grid, std::mt19937 *generator): Tetromino(grid, generator, {{1, 1}, {0,1}, {1, 0}, {0, 0}})
+OPiece::OPiece(Grid *grid, std::mt19937 *generator): Tetromino(grid, generator)
 {
     _block_arrangements = {
         {{1, 1}, {0,1}, {1, 0}, {0, 0}}
     };
+    _blocks = _block_arrangements[0];
+    set_position(_center);
 }
 
-IPiece::IPiece(Grid *grid, std::mt19937 *generator): Tetromino(grid, generator, {{0, -2}, {0, -1}, {0, 0}, {0, 1}})
+IPiece::IPiece(Grid *grid, std::mt19937 *generator): Tetromino(grid, generator)
 {
-    _block_arrangements = {
-        {{0, -2}, {0, -1}, {0, 0}, {0, 1}},
-        {{-2, 0}, {-1,0}, {0, 0}, {1, 0}}
+    constexpr int i_beam[4][4] = {
+        {0, 0, 1, 0},
+        {0, 0, 1, 0},
+        {0, 0, 1, 0},
+        {0, 0, 1, 0}
     };
+
+    constexpr int on_side[4][4] = {
+        {0, 0, 0, 0},
+        {1, 1, 1, 1},
+        {0, 0, 0, 0},
+        {0, 0, 0, 0}
+    };
+
+    _block_arrangements = {
+        _visual_grid_to_pos_vec(i_beam),
+        _visual_grid_to_pos_vec(on_side),
+    };
+
+    _blocks = _block_arrangements[0];
+    set_position(_center);
 }
 
-ZPiece::ZPiece(Grid *grid, std::mt19937 *generator): Tetromino(grid, generator, {{0, 1}, {0,0}, {1, 0}, {1, -1}})
+ZPiece::ZPiece(Grid *grid, std::mt19937 *generator): Tetromino(grid, generator)
 {
-    _block_arrangements = {
-        {{0, 1}, {0,0}, {1, 0}, {1, -1}},
-        {{-1, 0}, {0,0}, {0, 1}, {1, 1}},
+    constexpr int default_orientation[4][4] = {
+        {0, 0, 0, 0},
+        {0, 1, 1, 0},
+        {1, 1, 0, 0},
+        {0, 0, 0, 0}
     };
+
+    constexpr int flipped[4][4] = {
+        {0, 0, 0, 0},
+        {0, 1, 0, 0},
+        {0, 1, 1, 0},
+        {0, 0, 1, 0}
+    };
+
+    _block_arrangements = {
+        _visual_grid_to_pos_vec(default_orientation),
+        _visual_grid_to_pos_vec(flipped),
+    };
+
+    _blocks = _block_arrangements[0];
+    set_position(_center);
 }
 
-TPiece::TPiece(Grid *grid, std::mt19937 *generator): Tetromino(grid, generator, {{-1, 0}, {0, 0}, {1, 0}, {0, 1}})
+RZPiece::RZPiece(Grid *grid, std::mt19937 *generator): Tetromino(grid, generator)
 {
-    _block_arrangements = {
-
-        {{-1, 0}, {0, 0}, {1, 0}, {0, 1}},
-        {{0, 0}, {0, 1}, {0, -1}, {1, 0}},
-        {{-1, 0}, {0, 0}, {1, 0}, {0, -1}},
-        {{0, 0}, {0, 1}, {0, -1}, {-1, 0}},
+    constexpr int default_orientation[4][4] = {
+        {0, 0, 0, 0},
+        {0, 1, 1, 0},
+        {0, 0, 1, 1},
+        {0, 0, 0, 0}
     };
+
+    constexpr int flipped[4][4] = {
+        {0, 0, 0, 0},
+        {0, 0, 1, 0},
+        {0, 1, 1, 0},
+        {0, 1, 0, 0}
+    };
+
+    _block_arrangements = {
+        _visual_grid_to_pos_vec(default_orientation),
+        _visual_grid_to_pos_vec(flipped),
+    };
+
+    _blocks = _block_arrangements[0];
+    set_position(_center);
 }
 
-Tetromino::Tetromino(Grid *grid, std::mt19937* generator, std::vector<Position> blocks):
-                    _grid(grid), _generator(generator), _blocks(blocks)
+
+TPiece::TPiece(Grid *grid, std::mt19937 *generator): Tetromino(grid, generator)
+{
+    constexpr int default_orientation[4][4] = {
+        {0, 0, 0, 0},
+        {0, 0, 1, 0},
+        {0, 1, 1, 1},
+        {0, 0, 0, 0}
+    };
+
+    constexpr int to_right[4][4] = {
+        {0, 0, 0, 0},
+        {0, 0, 1, 0},
+        {0, 0, 1, 1},
+        {0, 0, 1, 0}
+    };
+
+    constexpr int flipped[4][4] = {
+        {0, 0, 0, 0},
+        {0, 0, 0, 0},
+        {0, 1, 1, 1},
+        {0, 0, 1, 0}
+    };
+
+    constexpr int to_left[4][4] = {
+        {0, 0, 0, 0},
+        {0, 0, 1, 0},
+        {0, 1, 1, 0},
+        {0, 0, 1, 0}
+    };
+
+    _block_arrangements = {
+        _visual_grid_to_pos_vec(default_orientation),
+        _visual_grid_to_pos_vec(to_right),
+        _visual_grid_to_pos_vec(flipped),
+        _visual_grid_to_pos_vec(to_left),
+
+    };
+    _blocks = _block_arrangements[0];
+    set_position(_center);
+}
+
+
+LPiece::LPiece(Grid *grid, std::mt19937 *generator): Tetromino(grid, generator)
+{
+    constexpr int default_orientation[4][4] = {
+        {0, 0, 1, 0},
+        {0, 0, 1, 0},
+        {0, 0, 1, 1},
+        {0, 0, 0, 0}
+    };
+
+    constexpr int to_right[4][4] = {
+        {0, 0, 0, 0},
+        {0, 0, 0, 1},
+        {0, 1, 1, 1},
+        {0, 0, 0, 0}
+    };
+
+    constexpr int flipped[4][4] = {
+        {0, 1, 1, 0},
+        {0, 0, 1, 0},
+        {0, 0, 1, 0},
+        {0, 0, 0, 0}
+    };
+
+    constexpr int to_left[4][4] = {
+        {0, 0, 0, 0},
+        {0, 1, 1, 1},
+        {0, 1, 0, 0},
+        {0, 0, 0, 0}
+    };
+
+    _block_arrangements = {
+        _visual_grid_to_pos_vec(default_orientation),
+        _visual_grid_to_pos_vec(to_right),
+        _visual_grid_to_pos_vec(flipped),
+        _visual_grid_to_pos_vec(to_left),
+
+    };
+    _blocks = _block_arrangements[0];
+    set_position(_center);
+}
+
+JPiece::JPiece(Grid *grid, std::mt19937 *generator): Tetromino(grid, generator)
+{
+    constexpr int default_orientation[4][4] = {
+        {0, 0, 1, 0},
+        {0, 0, 1, 0},
+        {0, 1, 1, 0},
+        {0, 0, 0, 0}
+    };
+
+    constexpr int to_right[4][4] = {
+        {0, 0, 0, 0},
+        {0, 1, 1, 1},
+        {0, 0, 0, 1},
+        {0, 0, 0, 0}
+    };
+
+    constexpr int flipped[4][4] = {
+        {0, 0, 1, 1},
+        {0, 0, 1, 0},
+        {0, 0, 1, 0},
+        {0, 0, 0, 0}
+    };
+
+    constexpr int to_left[4][4] = {
+        {0, 1, 0, 0},
+        {0, 1, 1, 1},
+        {0, 0, 0, 0},
+        {0, 0, 0, 0}
+    };
+
+    _block_arrangements = {
+        _visual_grid_to_pos_vec(default_orientation),
+        _visual_grid_to_pos_vec(to_right),
+        _visual_grid_to_pos_vec(flipped),
+        _visual_grid_to_pos_vec(to_left),
+
+    };
+    _blocks = _block_arrangements[0];
+    set_position(_center);
+}
+
+Tetromino::Tetromino(Grid *grid, std::mt19937* generator):
+                    _grid(grid), _generator(generator)
 {
     _distr = std::uniform_int_distribution<>(0, 3);
     _color = _get_random_color();
@@ -190,4 +363,18 @@ sf::Color Tetromino::_get_random_color()
         return sf::Color::Blue;
         break;
     }
+}
+
+std::vector<Position> Tetromino::_visual_grid_to_pos_vec(const int visual_blocks[4][4])
+{
+    std::vector<Position> positions;
+
+    for (int row = 0; row < 4; ++row) {
+        for (int column = 0; column < 4; ++column) {
+            if (visual_blocks[row][column]) {
+                positions.push_back(Position{-2 + column, -2 + row});
+            }
+        }
+    }
+    return positions;
 }
